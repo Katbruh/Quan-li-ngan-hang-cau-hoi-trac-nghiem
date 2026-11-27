@@ -181,9 +181,14 @@ public class DanhSachDeThi implements IDanhSach {
 
     @Override
     public void xuatDanhSach() {
-        String[][] bang = new String[soLuong + 1][9];
+        String maGV = QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien ? QuanLyDanhSach.nguoiDungHienTai.getMa() : null;
+        String[][] bang = new String[1][9];
         bang[0] = new String[]{"Ma de", "Ten de", "Ma mon", "Loai", "Thoi gian", "Ngay thi", "Ky thi", "Doi tuong", "Ma GV"};
-        for (int i = 0; i < soLuong; i++) bang[i + 1] = ds[i].xuat();
+        for (int i = 0; i < soLuong; i++) {
+            if (maGV != null && !ds[i].getMaGV().equalsIgnoreCase(maGV)) continue;
+            bang = Arrays.copyOf(bang, bang.length + 1);
+            bang[bang.length - 1] = ds[i].xuat();
+        }
         FormatBang.inBangDuLieu("DANH SACH DE THI", bang);
     }
 }

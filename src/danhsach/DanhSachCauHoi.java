@@ -61,9 +61,7 @@ public class DanhSachCauHoi implements IDanhSach {
     private int timViTri(String maCH) {
         if (maCH == null) return -1;
         String key = maCH.trim();
-        for (int i = 0; i < soLuong; i++) {
-            if (ds[i].getMaCH().equalsIgnoreCase(key)) return i;
-        }
+        for (int i = 0; i < soLuong; i++) { if (ds[i].getMaCH().equalsIgnoreCase(key)) return i; }
         return -1;
     }
 
@@ -88,9 +86,7 @@ public class DanhSachCauHoi implements IDanhSach {
         return vt == -1 ? null : ds[vt].saoChep();
     }
 
-    public CauHoi docPhanTu(int i) {
-        return (i < 0 || i >= soLuong) ? null : ds[i].saoChep();
-    }
+    public CauHoi docPhanTu(int i) { return (i < 0 || i >= soLuong) ? null : ds[i].saoChep(); }
 
     public boolean kiemTraTonTaiGiangVien(String maGV) {
         for (int i = 0; i < soLuong; i++) { if (ds[i].getMaGV().equalsIgnoreCase(maGV)) return true; }
@@ -103,10 +99,7 @@ public class DanhSachCauHoi implements IDanhSach {
         for (int i = 0; i < soLuong; i++) {
             String ma = ds[i].getMaCH();
             if (ma.startsWith(prefix)) {
-                try {
-                    int so = Integer.parseInt(ma.substring(prefix.length()));
-                    if (so > max) max = so;
-                } catch (NumberFormatException e) {}
+                try { int so = Integer.parseInt(ma.substring(prefix.length())); if (so > max) max = so; } catch (NumberFormatException e) {}
             }
         }
         return prefix + String.format("%03d", max + 1);
@@ -190,9 +183,14 @@ public class DanhSachCauHoi implements IDanhSach {
 
     @Override
     public void xuatDanhSach() {
-        String[][] bang = new String[soLuong + 1][6];
+        String maGV = QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien ? QuanLyDanhSach.nguoiDungHienTai.getMa() : null;
+        String[][] bang = new String[1][6];
         bang[0] = new String[]{"Ma CH", "Ma mon", "Noi dung", "Ma GV", "Loai", "Dap an"};
-        for (int i = 0; i < soLuong; i++) bang[i + 1] = ds[i].xuat();
+        for (int i = 0; i < soLuong; i++) {
+            if (maGV != null && !ds[i].getMaGV().equalsIgnoreCase(maGV)) continue;
+            bang = Arrays.copyOf(bang, bang.length + 1);
+            bang[bang.length - 1] = ds[i].xuat();
+        }
         FormatBang.inBangDuLieu("DANH SACH CAU HOI", bang);
     }
 }
