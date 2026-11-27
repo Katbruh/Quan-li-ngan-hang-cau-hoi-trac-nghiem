@@ -141,7 +141,15 @@ public class DanhSachDeThi implements IDanhSach {
             } else if (QuanLyDanhSach.DS_KETQUA.kiemTraTonTaiDeThi(ds[vt].getMaDe())) {
                 System.out.println("Khong the sua! De thi da co sinh vien thi.");
             } else {
+                String maMonCu = ds[vt].getMaMonHoc();
+                int loaiCu = ds[vt].getLoaiCauHoi();
+                boolean daCoCau = QuanLyDanhSach.DS_CHITIETDETHI.demTheoMa(ds[vt].getMaDe()) > 0;
                 ds[vt].nhap();
+                if (daCoCau) {
+                    ds[vt].setMaMonHoc(maMonCu);
+                    ds[vt].setLoaiCauHoi(loaiCu);
+                    System.out.println("De da co cau hoi nen giu nguyen mon (" + maMonCu + ") va loai cau hoi!");
+                }
                 System.out.println("Da cap nhat de thi!");
             }
         } while (NhapChuan.docYesNo("Co tiep tuc khong", false));
