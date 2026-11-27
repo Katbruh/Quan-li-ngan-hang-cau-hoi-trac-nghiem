@@ -30,14 +30,14 @@ public class KetQuaThi implements ITruyXuatMoHinh {
 
     public KetQuaThi(String maKQ, String maSV, String maDe, LocalDateTime ngayThi, int soCauDung, int tongSoCau, double diem, long thoiGianGiay) {
         this();
-        setMaKQ(maKQ);
-        setMaSV(maSV);
-        setMaDe(maDe);
-        setNgayThi(ngayThi);
-        setSoCauDung(soCauDung);
-        setTongSoCau(tongSoCau);
-        setDiem(diem);
-        setThoiGianGiay(thoiGianGiay);
+        if (!setMaKQ(maKQ)) this.maKQ = "";
+        if (!setMaSV(maSV)) this.maSV = "";
+        if (!setMaDe(maDe)) this.maDe = "";
+        if (!setNgayThi(ngayThi)) this.ngayThi = LocalDateTime.now();
+        if (!setSoCauDung(soCauDung)) this.soCauDung = 0;
+        if (!setTongSoCau(tongSoCau)) this.tongSoCau = 1;
+        if (!setDiem(diem)) this.diem = 0;
+        if (!setThoiGianGiay(thoiGianGiay)) this.thoiGianGiay = 0;
     }
 
     public KetQuaThi(KetQuaThi x) {

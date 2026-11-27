@@ -36,16 +36,16 @@ public class DeThi implements ITruyXuatMoHinh {
 
     public DeThi(String maDe, String tenDe, String maMonHoc, int loaiCauHoi, int thoiGian, LocalDateTime ngayThi, String maKyThi, String loaiDoiTuong, String doiTuong, String maGV) {
         this();
-        setMaDe(maDe);
-        setTenDe(tenDe);
-        setMaMonHoc(maMonHoc);
-        setLoaiCauHoi(loaiCauHoi);
-        setThoiGian(thoiGian);
-        setNgayThi(ngayThi);
-        setMaKyThi(maKyThi);
-        setLoaiDoiTuong(loaiDoiTuong);
-        setDoiTuong(doiTuong);
-        setMaGV(maGV);
+        if (!setMaDe(maDe)) this.maDe = "";
+        if (!setTenDe(tenDe)) this.tenDe = "";
+        if (!setMaMonHoc(maMonHoc)) this.maMonHoc = "";
+        if (!setLoaiCauHoi(loaiCauHoi)) this.loaiCauHoi = 1;
+        if (!setThoiGian(thoiGian)) this.thoiGian = 1;
+        if (!setNgayThi(ngayThi)) this.ngayThi = LocalDateTime.now();
+        if (!setMaKyThi(maKyThi)) this.maKyThi = "";
+        if (!setLoaiDoiTuong(loaiDoiTuong)) this.loaiDoiTuong = "LOP";
+        if (!setDoiTuong(doiTuong)) this.doiTuong = "";
+        if (!setMaGV(maGV)) this.maGV = "";
     }
 
     public DeThi(DeThi x) {

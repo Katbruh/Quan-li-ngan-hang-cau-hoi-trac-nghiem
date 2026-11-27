@@ -23,11 +23,11 @@ public class ChiTietKetQua implements ITruyXuatMoHinh {
 
     public ChiTietKetQua(String maKQ, String maCH, String traLoi, String dapAnDung, double diemDatDuoc) {
         this();
-        setMaKQ(maKQ);
-        setMaCH(maCH);
-        setTraLoi(traLoi);
-        setDapAnDung(dapAnDung);
-        setDiemDatDuoc(diemDatDuoc);
+        if (!setMaKQ(maKQ)) this.maKQ = "";
+        if (!setMaCH(maCH)) this.maCH = "";
+        if (!setTraLoi(traLoi)) this.traLoi = "";
+        if (!setDapAnDung(dapAnDung)) this.dapAnDung = "";
+        if (!setDiemDatDuoc(diemDatDuoc)) this.diemDatDuoc = 0;
     }
 
     public ChiTietKetQua(ChiTietKetQua x) {

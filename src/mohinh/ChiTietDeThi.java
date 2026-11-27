@@ -19,9 +19,9 @@ public class ChiTietDeThi implements ITruyXuatMoHinh {
 
     public ChiTietDeThi(String maDe, String maCH, double diemToiDa) {
         this();
-        setMaDe(maDe);
-        setMaCH(maCH);
-        setDiemToiDa(diemToiDa);
+        if (!setMaDe(maDe)) this.maDe = "";
+        if (!setMaCH(maCH)) this.maCH = "";
+        if (!setDiemToiDa(diemToiDa)) this.diemToiDa = 1.0;
     }
 
     public ChiTietDeThi(ChiTietDeThi x) {
