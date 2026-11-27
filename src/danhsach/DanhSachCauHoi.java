@@ -157,6 +157,8 @@ public class DanhSachCauHoi implements IDanhSach {
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
                 System.out.println("Ban chi duoc sua cau hoi cua minh!");
+            } else if (QuanLyDanhSach.DS_CHITIETDETHI.kiemTraTonTaiCauHoi(ds[vt].getMaCH())) {
+                System.out.println("Khong the sua! Cau hoi dang co trong de thi.");
             } else {
                 ds[vt].nhap();
                 System.out.println("Da cap nhat cau hoi!");
