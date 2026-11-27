@@ -88,6 +88,10 @@ public final class XuLyThi {
             if (dsGiao[i].getMaDe().equalsIgnoreCase(maDe)) { deChon = dsGiao[i]; break; }
         }
         if (deChon == null) { System.out.println("Ma de khong nam trong danh sach duoc giao!"); return; }
+        if (deChon.getNgayThi() != null && LocalDateTime.now().isBefore(deChon.getNgayThi())) {
+            System.out.println("Chua den gio mo de thi (" + deChon.getNgayThi().format(NhapChuan.DINH_DANG) + ")!");
+            return;
+        }
         if (QuanLyDanhSach.DS_KETQUA.daThi(sv.getMaSV(), deChon.getMaDe())) {
             System.out.println("Ban da thi de nay roi, khong duoc thi lai!");
             return;
