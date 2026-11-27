@@ -139,7 +139,9 @@ public class DanhSachCauHoi implements IDanhSach {
         ch.nhap();
         ch.setMaCH(taoMaMoi(loai));
         if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien) {
-            ch.setMaGV(QuanLyDanhSach.nguoiDungHienTai.getMa());
+            GiangVien gv = (GiangVien) QuanLyDanhSach.nguoiDungHienTai;
+            ch.setMaGV(gv.getMa());
+            ch.setMaMonHoc(gv.getMaMonHoc());
         } else {
             ch.setMaGV(NhapChuan.docChuoiKhongRong("Ma giang vien"));
         }

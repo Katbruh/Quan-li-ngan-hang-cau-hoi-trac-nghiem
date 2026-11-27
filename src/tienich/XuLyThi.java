@@ -22,7 +22,7 @@ public final class XuLyThi {
         String maGV = laGV ? QuanLyDanhSach.nguoiDungHienTai.getMa() : NhapChuan.docChuoiKhongRong("Ma giang vien");
         int loai = NhapChuan.docSoNguyenTrongKhoang("Loai cau hoi (1: Mot DA, 2: Nhieu DA, 3: Dung/Sai)", 1, 3);
         String tenDe = NhapChuan.docChuoiKhongRong("Ten de thi");
-        String maMon = NhapChuan.docChuoiKhongRong("Ma mon hoc");
+        String maMon = laGV ? ((GiangVien) QuanLyDanhSach.nguoiDungHienTai).getMaMonHoc() : NhapChuan.docChuoiKhongRong("Ma mon hoc");
         CauHoi[] nguon = new CauHoi[0];
         for (int i = 0; i < QuanLyDanhSach.DS_CAUHOI.getSoLuong(); i++) {
             CauHoi ch = QuanLyDanhSach.DS_CAUHOI.docPhanTu(i);
