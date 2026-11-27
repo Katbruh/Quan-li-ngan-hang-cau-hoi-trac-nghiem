@@ -36,9 +36,7 @@ public final class FormatBang {
         }
         // ve vien duoi cua bang
         System.out.println(taoDuongKe(doRong, '└', '┴', '┘'));
-        if (bangDuLieu.length == 1) {
-            System.out.println("(Khong co du lieu)");
-        }
+        if (bangDuLieu.length == 1) System.out.println("(Khong co du lieu)");
     }
 
     public static void inBangThongKe(String[] tieuDeDong, String[] tieuDeCot, double[][] bangSoLieu) {
@@ -98,7 +96,7 @@ public final class FormatBang {
         System.out.println(sb.toString());
     }
 
-    // dinh dang so nguyen gon hoac 2 chu so thap phan
+    // dinh dang so nguyen gon hoac 2 chu so thap phan theo chuan dau cham
     private static String dinhDangSo(double val) {
         if (Math.abs(val - Math.round(val)) < 1e-9) return String.valueOf(Math.round(val));
         return String.format(Locale.US, "%.2f", val);
