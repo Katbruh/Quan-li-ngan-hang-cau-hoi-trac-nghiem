@@ -34,6 +34,7 @@ public final class Menu {
             if (nd instanceof QuanTriVien) menuQuanTriVien();
             else if (nd instanceof GiangVien) menuGiangVien((GiangVien) nd);
             else if (nd instanceof SinhVien) menuSinhVien((SinhVien) nd);
+            QuanLyDanhSach.ghiDuLieuDanhSach();
             QuanLyDanhSach.nguoiDungHienTai = null;
         }
     }

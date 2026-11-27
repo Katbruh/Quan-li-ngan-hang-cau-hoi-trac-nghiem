@@ -60,6 +60,7 @@ public final class XuLyThi {
                 daLay++;
             }
         }
+        QuanLyDanhSach.ghiDuLieuDanhSach();
         System.out.println("Da tao de thi " + maDe + " voi " + soCau + " cau hoi.");
     }
 
@@ -129,6 +130,7 @@ public final class XuLyThi {
         long thoiGianGiay = (System.currentTimeMillis() - batDau) / 1000L;
         KetQuaThi kq = new KetQuaThi(maKQ, sv.getMaSV(), deChon.getMaDe(), LocalDateTime.now(), soCauDung, dsCT.length, tongDiem, thoiGianGiay);
         QuanLyDanhSach.DS_KETQUA.themVaoDanhSach(kq);
+        QuanLyDanhSach.ghiDuLieuDanhSach();
         System.out.println("\n=== KET QUA BAI THI (" + maKQ + ") ===");
         System.out.println("So cau dung: " + soCauDung + "/" + dsCT.length);
         System.out.println("Tong diem: " + String.format(Locale.US, "%.2f", tongDiem));
