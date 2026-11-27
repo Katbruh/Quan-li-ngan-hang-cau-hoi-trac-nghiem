@@ -155,7 +155,9 @@ public class DanhSachNguoiDung implements IDanhSach {
     @Override
     public void nhapSua() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can sua"));
+            String ma = NhapChuan.docChuoi("Nhap ma nguoi dung can sua (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay nguoi dung!"); }
             else {
                 ds[vt].nhap();
@@ -167,7 +169,9 @@ public class DanhSachNguoiDung implements IDanhSach {
     @Override
     public void nhapXoa() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can xoa"));
+            String maNhap = NhapChuan.docChuoi("Nhap ma nguoi dung can xoa (Enter de huy)");
+            if (maNhap.isEmpty()) break;
+            int vt = timViTri(maNhap);
             if (vt == -1) { System.out.println("Khong tim thay nguoi dung!"); }
             else {
                 String ma = ds[vt].getMa();

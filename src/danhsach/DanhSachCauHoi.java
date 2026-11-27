@@ -152,7 +152,9 @@ public class DanhSachCauHoi implements IDanhSach {
     @Override
     public void nhapSua() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma cau hoi can sua"));
+            String ma = NhapChuan.docChuoi("Nhap ma cau hoi can sua (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay cau hoi!"); }
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
@@ -169,7 +171,9 @@ public class DanhSachCauHoi implements IDanhSach {
     @Override
     public void nhapXoa() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma cau hoi can xoa"));
+            String ma = NhapChuan.docChuoi("Nhap ma cau hoi can xoa (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay cau hoi!"); }
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
