@@ -1,0 +1,31 @@
+SV48217 | Nguyen Minh Hoang | A25
+SV73509 | Tran Quoc Bao | B25
+SV19642 | Le Ngoc Khanh Linh | C25
+SV82063 | Pham Gia Huy | A26
+SV35184 | Vo Thanh Cong | B26
+SV60428 | Dang Thi Minh Anh | C26
+SV92715 | Bui Hoang Nam | A25
+SV14386 | Do Nguyen Hai Yen | B25
+SV56831 | Ho Quang Minh | C25
+SV27490 | Nguyen Phuc Thinh | A26
+SV81357 | Truong Gia Bao | B26
+SV42961 | Phan Thi Ngoc Mai | C26
+SV65720 | Duong Minh Nhat | A18
+SV30295 | Ly Hoang Phuc | B18
+SV94168 | Nguyen Thi Thanh Truc | C18
+SV18634 | Tran Duc Anh | A25
+SV57082 | Le Thanh Dat | B25
+SV26317 | Pham Ngoc Bich Ngan | C25
+SV89403 | Vo Minh Quan | A26
+SV71526 | Dang Quoc Khanh | B26
+SV43870 | Nguyen Hoang Yen Nhi | C26
+SV10952 | Tran Gia Hung | A18
+SV68241 | Lê Thị Kim Chi | B18
+SV35796 | Pham Tuan Kiet | C18
+SV92048 | Bui Minh Chau | A25
+SV54613 | Do Thanh Nhan | B25
+SV78129 | Ho Ngoc Phuong Thao | C25
+SV21564 | Nguyen Duc Toan | A26
+SV86307 | Truong Thi Bao Ngoc | B26
+SV39451 | Phan Minh Tri | C26
+SV001 | Tran Hoai Nam | C18

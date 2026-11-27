@@ -1,0 +1,11 @@
+GV48217 | Nguyen Van Hung | OOP
+GV73509 | Tran Thi Thu Ha | CTDLGT
+GV19642 | Le Quoc Bao | CSDL
+GV82063 | Pham Minh Tuan | MMT
+GV35184 | Vo Thi Ngoc Mai | HDH
+GV60428 | Dang Hoang Nam | LTDT
+GV92715 | Bui Thi Thanh Truc | Phan tich va thiet ke he thong
+GV14386 | Do Thanh Dat | CNPM
+GV56831 | Ho Ngoc Phuong | AI
+GV27490 | Nguyen Gia Khanh | ATTT
+GV61528 | Nguyen Minh Khoa | WEB
