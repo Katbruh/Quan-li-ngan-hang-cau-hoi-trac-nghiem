@@ -104,10 +104,8 @@ public final class XuLyThi {
             System.out.println("\n--- Cau " + (i + 1) + "/" + dsCT.length + " ---");
             ch.xuatChiTiet();
             String traLoi;
-            if (ch.getLoaiCauHoi() == 1) {
-                traLoi = NhapChuan.docChuoi("Chon dap an (A/B/C/D hoac Enter bo qua)").toUpperCase();
-            } else if (ch.getLoaiCauHoi() == 2) {
-                traLoi = NhapChuan.docChuoi("Chon cac dap an (VD: AB, Enter bo qua)").toUpperCase();
+            if (ch.getLoaiCauHoi() == 1 || ch.getLoaiCauHoi() == 2) {
+                traLoi = docDapAnChon(ch.getLoaiCauHoi());
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int k = 0; k < 4; k++) sb.append(NhapChuan.docDungSai("Y " + (char) ('A' + k)));
@@ -169,6 +167,16 @@ public final class XuLyThi {
             }
         }
         FormatBang.inBangDuLieu("KET QUA THI", bang);
+    }
+
+    private static String docDapAnChon(int loai) {
+        String prompt = loai == 1 ? "Chon dap an (A/B/C/D hoac Enter bo qua)" : "Chon cac dap an (VD: AB, Enter bo qua)";
+        String mau = loai == 1 ? "[A-D]" : "[A-D]+";
+        while (true) {
+            String s = NhapChuan.docChuoi(prompt).toUpperCase();
+            if (s.isEmpty() || s.matches(mau)) return s;
+            System.out.println("Dap an khong hop le! Chi nhap A, B, C, D hoac Enter bo qua.");
+        }
     }
 
     private static boolean coTrongDanhSach(String dsMa, String maSV) {
