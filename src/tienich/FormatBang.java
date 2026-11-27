@@ -1,5 +1,7 @@
 package tienich;
 
+import java.util.Locale;
+
 public final class FormatBang {
     private FormatBang() {
     }
@@ -16,14 +18,10 @@ public final class FormatBang {
         int soCot = bangDuLieu[0].length;
         int[] doRong = new int[soCot];
         for (int r = 0; r < bangDuLieu.length; r++) {
-            if (bangDuLieu[r] == null) {
-                continue;
-            }
+            if (bangDuLieu[r] == null) continue;
             for (int c = 0; c < soCot && c < bangDuLieu[r].length; c++) {
                 String giaTri = bangDuLieu[r][c] == null ? "" : bangDuLieu[r][c];
-                if (giaTri.length() > doRong[c]) {
-                    doRong[c] = giaTri.length();
-                }
+                if (giaTri.length() > doRong[c]) doRong[c] = giaTri.length();
             }
         }
         // ve vien tren va dong tieu de
@@ -38,9 +36,7 @@ public final class FormatBang {
         }
         // ve vien duoi cua bang
         System.out.println(taoDuongKe(doRong, '└', '┴', '┘'));
-        if (bangDuLieu.length == 1) {
-            System.out.println("(Khong co du lieu)");
-        }
+        if (bangDuLieu.length == 1) System.out.println("(Khong co du lieu)");
     }
 
     public static void inBangThongKe(String[] tieuDeDong, String[] tieuDeCot, double[][] bangSoLieu) {
@@ -67,16 +63,11 @@ public final class FormatBang {
             int gioiHanCong = tinhTongCotCuoi ? soCotDuLieu - 1 : soCotDuLieu;
             for (int c = 0; c < soCotDuLieu; c++) {
                 double val = bangSoLieu[r][c];
-                if (c < gioiHanCong) {
-                    tong += val;
-                }
+                if (c < gioiHanCong) tong += val;
                 bang[r + 1][c + 1] = dinhDangSo(val);
             }
-            if (themCotTong) {
-                bang[r + 1][soCotDuLieu + 1] = dinhDangSo(tong);
-            } else if (tinhTongCotCuoi) {
-                bang[r + 1][soCotDuLieu] = dinhDangSo(tong);
-            }
+            if (themCotTong) bang[r + 1][soCotDuLieu + 1] = dinhDangSo(tong);
+            else if (tinhTongCotCuoi) bang[r + 1][soCotDuLieu] = dinhDangSo(tong);
         }
         inBangDuLieu("THONG KE", bang);
     }
@@ -86,9 +77,7 @@ public final class FormatBang {
         StringBuilder sb = new StringBuilder();
         sb.append(trai);
         for (int c = 0; c < doRong.length; c++) {
-            for (int k = 0; k < doRong[c] + 2; k++) {
-                sb.append('─');
-            }
+            for (int k = 0; k < doRong[c] + 2; k++) sb.append('─');
             sb.append(c < doRong.length - 1 ? giua : phai);
         }
         return sb.toString();
@@ -101,19 +90,15 @@ public final class FormatBang {
         for (int c = 0; c < doRong.length; c++) {
             String giaTri = (dong != null && c < dong.length && dong[c] != null) ? dong[c] : "";
             sb.append(' ').append(giaTri);
-            for (int k = giaTri.length(); k < doRong[c]; k++) {
-                sb.append(' ');
-            }
+            for (int k = giaTri.length(); k < doRong[c]; k++) sb.append(' ');
             sb.append(" │");
         }
         System.out.println(sb.toString());
     }
 
-    // dinh dang so nguyen gon hoac 2 chu so thap phan
+    // dinh dang so nguyen gon hoac 2 chu so thap phan theo chuan dau cham
     private static String dinhDangSo(double val) {
-        if (Math.abs(val - Math.round(val)) < 1e-9) {
-            return String.valueOf(Math.round(val));
-        }
-        return String.format("%.2f", val);
+        if (Math.abs(val - Math.round(val)) < 1e-9) return String.valueOf(Math.round(val));
+        return String.format(Locale.US, "%.2f", val);
     }
 }

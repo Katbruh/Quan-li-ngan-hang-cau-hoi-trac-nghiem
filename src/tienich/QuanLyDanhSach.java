@@ -9,7 +9,6 @@ import danhsach.DanhSachNguoiDung;
 import java.io.IOException;
 import java.util.Arrays;
 import mohinh.CauHoi;
-import mohinh.DeThi;
 import mohinh.KetQuaThi;
 import mohinh.NguoiDung;
 import rangbuoc.IChiTietDanhSach;
@@ -26,109 +25,109 @@ public final class QuanLyDanhSach {
     public static final DanhSachKetQua DS_KETQUA = new DanhSachKetQua();
     public static final DanhSachChiTietKetQua DS_CHITIETKETQUA = new DanhSachChiTietKetQua();
 
-    public static final ITruyVanDanhSach[] DANHSACHTRUYCAPFILE = {DS_CAUHOI, DS_NGUOIDUNG, DS_DETHI, DS_CHITIETDETHI, DS_KETQUA, DS_CHITIETKETQUA};
+    public static final ITruyVanDanhSach[] DANHSACHTRUYCAPFILE = {
+        DS_CAUHOI, DS_NGUOIDUNG, DS_DETHI, DS_CHITIETDETHI, DS_KETQUA, DS_CHITIETKETQUA
+    };
     public static final IDanhSach[] DANHSACH = {DS_NGUOIDUNG, DS_CAUHOI, DS_DETHI};
     public static final IChiTietDanhSach[] DANHSACHCHITIET = {DS_CHITIETDETHI, DS_CHITIETKETQUA};
 
     private QuanLyDanhSach() {
     }
 
-    // nap va ghi du lieu cho ca 6 danh sach
+    // nap du lieu tu 6 file nhi phan khi khoi dong
     public static void taiDuLieuDanhSach() {
         for (int i = 0; i < DANHSACHTRUYCAPFILE.length; i++) {
             try {
                 DANHSACHTRUYCAPFILE[i].nhapDanhSachTuFile();
             } catch (IOException e) {
-                System.out.println("Khong the doc du lieu: " + e.getMessage());
+                System.out.println("Loi doc file du lieu: " + e.getMessage());
             }
         }
     }
 
+    // ghi toan bo du lieu ra 6 file nhi phan khi thoat
     public static void ghiDuLieuDanhSach() {
         for (int i = 0; i < DANHSACHTRUYCAPFILE.length; i++) {
             try {
                 DANHSACHTRUYCAPFILE[i].xuatDanhSachRaFile();
             } catch (IOException e) {
-                System.out.println("Khong the ghi du lieu: " + e.getMessage());
+                System.out.println("Loi ghi file du lieu: " + e.getMessage());
             }
         }
     }
 
-    // 3 ham thong ke dung chung khuon 3 buoc
+    // thong ke so luong cau hoi theo tung mon hoc va loai cau hoi
     public static void thongKeCauHoiTheoMonVaLoai() {
-        String[] mon = new String[DS_CAUHOI.getSoLuong()];
-        int soMon = 0;
+        String[] dsMon = new String[0];
         for (int i = 0; i < DS_CAUHOI.getSoLuong(); i++) {
-            CauHoi ch = DS_CAUHOI.docPhanTu(i);
-            boolean daCo = false;
-            for (int j = 0; j < soMon; j++) {
-                if (mon[j].equals(ch.getMaMonHoc())) {
-                    daCo = true;
-                    break;
-                }
+            String mon = DS_CAUHOI.docPhanTu(i).getMaMonHoc();
+            boolean co = false;
+            for (int j = 0; j < dsMon.length; j++) {
+                if (dsMon[j].equalsIgnoreCase(mon)) { co = true; break; }
             }
-            if (!daCo) mon[soMon++] = ch.getMaMonHoc();
+            if (!co) {
+                dsMon = Arrays.copyOf(dsMon, dsMon.length + 1);
+                dsMon[dsMon.length - 1] = mon;
+            }
         }
-        String[] tieuDeDong = Arrays.copyOf(mon, soMon);
-        double[][] bangSoLieu = new double[soMon][3];
+        if (dsMon.length == 0) { System.out.println("(Khong co du lieu thong ke)"); return; }
+        double[][] bang = new double[dsMon.length][3];
         for (int i = 0; i < DS_CAUHOI.getSoLuong(); i++) {
             CauHoi ch = DS_CAUHOI.docPhanTu(i);
-            for (int j = 0; j < soMon; j++) {
-                if (mon[j].equals(ch.getMaMonHoc())) {
-                    if (ch.getLoaiCauHoi() == 1) bangSoLieu[j][0]++;
-                    else if (ch.getLoaiCauHoi() == 2) bangSoLieu[j][1]++;
-                    else bangSoLieu[j][2]++;
+            for (int j = 0; j < dsMon.length; j++) {
+                if (dsMon[j].equalsIgnoreCase(ch.getMaMonHoc())) {
+                    bang[j][ch.getLoaiCauHoi() - 1] += 1;
                     break;
                 }
             }
         }
-        FormatBang.inBangThongKe(tieuDeDong, new String[]{"Mot dap an", "Nhieu dap an", "Dung/Sai", "Tong cong"}, bangSoLieu);
+        String[] cot = {"Mot dap an", "Nhieu dap an", "Dung/Sai", "Tong cong"};
+        FormatBang.inBangThongKe(dsMon, cot, bang);
     }
 
     public static void thongKeKetQuaTheoDeThi() {
-        String[] tieuDeDong = new String[DS_DETHI.getSoLuong()];
-        double[][] bangSoLieu = new double[DS_DETHI.getSoLuong()][4];
-        for (int i = 0; i < DS_DETHI.getSoLuong(); i++) {
-            DeThi de = DS_DETHI.docPhanTu(i);
-            tieuDeDong[i] = de.getMaDe();
-            double tong = 0;
-            double cao = 0;
-            double thap = 0;
+        int n = DS_DETHI.getSoLuong();
+        if (n == 0) { System.out.println("(Khong co du lieu thong ke)"); return; }
+        String[] dsMaDe = new String[n];
+        double[][] bang = new double[n][4];
+        for (int i = 0; i < n; i++) {
+            String maDe = DS_DETHI.docPhanTu(i).getMaDe();
+            dsMaDe[i] = maDe;
             int dem = 0;
+            double tong = 0, max = 0, min = 0;
             for (int j = 0; j < DS_KETQUA.getSoLuong(); j++) {
                 KetQuaThi kq = DS_KETQUA.docPhanTu(j);
-                if (kq.getMaDe().equals(de.getMaDe())) {
-                    double diem = kq.getDiem();
-                    if (dem == 0) {
-                        cao = diem;
-                        thap = diem;
-                    } else {
-                        if (diem > cao) cao = diem;
-                        if (diem < thap) thap = diem;
-                    }
-                    tong += diem;
+                if (kq.getMaDe().equalsIgnoreCase(maDe)) {
+                    double d = kq.getDiem();
+                    if (dem == 0) { max = d; min = d; }
+                    else { if (d > max) max = d; if (d < min) min = d; }
+                    tong += d;
                     dem++;
                 }
             }
-            bangSoLieu[i][0] = dem;
-            bangSoLieu[i][1] = dem == 0 ? 0 : tong / dem;
-            bangSoLieu[i][2] = cao;
-            bangSoLieu[i][3] = thap;
+            if (dem > 0) {
+                bang[i][0] = dem;
+                bang[i][1] = tong / dem;
+                bang[i][2] = max;
+                bang[i][3] = min;
+            }
         }
-        FormatBang.inBangThongKe(tieuDeDong, new String[]{"So SV da thi", "Diem TB", "Cao nhat", "Thap nhat"}, bangSoLieu);
+        String[] cot = {"So SV da thi", "Diem TB", "Cao nhat", "Thap nhat"};
+        FormatBang.inBangThongKe(dsMaDe, cot, bang);
     }
 
     public static void thongKeLuotThiTheoQuy() {
         int nam = NhapChuan.docNam("Nhap nam thong ke");
-        String[] tieuDeDong = {"Nam " + nam};
-        double[][] bangSoLieu = new double[1][4];
+        String[] dong = {"Nam " + nam};
+        String[] cot = {"Quy 1", "Quy 2", "Quy 3", "Quy 4", "Tong cong"};
+        double[][] bang = new double[1][4];
         for (int i = 0; i < DS_KETQUA.getSoLuong(); i++) {
             KetQuaThi kq = DS_KETQUA.docPhanTu(i);
-            if (kq.getNgayThi().getYear() == nam) {
+            if (kq.getNgayThi() != null && kq.getNgayThi().getYear() == nam) {
                 int quy = (kq.getNgayThi().getMonthValue() - 1) / 3;
-                bangSoLieu[0][quy]++;
+                bang[0][quy] += 1;
             }
         }
-        FormatBang.inBangThongKe(tieuDeDong, new String[]{"Quy 1", "Quy 2", "Quy 3", "Quy 4", "Tong cong"}, bangSoLieu);
+        FormatBang.inBangThongKe(dong, cot, bang);
     }
 }

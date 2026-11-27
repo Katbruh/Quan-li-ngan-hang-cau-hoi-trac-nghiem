@@ -1,12 +1,12 @@
 package danhsach;
 
 import java.io.*;
+import java.util.Arrays;
 import mohinh.*;
 import rangbuoc.IDanhSach;
 import tienich.*;
 
 public class DanhSachNguoiDung implements IDanhSach {
-    // ======================================================
     private NguoiDung[] ds;
     private int soLuong;
 
@@ -15,23 +15,21 @@ public class DanhSachNguoiDung implements IDanhSach {
         this.soLuong = 0;
     }
 
-    @Override
-    public DanhSachNguoiDung saoChep() {
-        DanhSachNguoiDung kq = new DanhSachNguoiDung();
-        kq.ds = new NguoiDung[soLuong];
-        for (int i = 0; i < soLuong; i++) {
-            kq.ds[i] = ds[i].saoChep();
+    public DanhSachNguoiDung(DanhSachNguoiDung x) {
+        this.soLuong = x.soLuong;
+        this.ds = new NguoiDung[x.soLuong];
+        for (int i = 0; i < x.soLuong; i++) {
+            this.ds[i] = x.ds[i].saoChep();
         }
-        kq.soLuong = soLuong;
-        return kq;
     }
 
     @Override
-    public int getSoLuong() {
-        return soLuong;
-    }
+    public IDanhSach saoChep() { return new DanhSachNguoiDung(this); }
 
-    // ------------------------------------
+    @Override
+    public int getSoLuong() { return soLuong; }
+
+    // ======================================================
     @Override
     public void xuatDanhSachRaFile() throws IOException {
         new File("data").mkdirs();
@@ -47,171 +45,140 @@ public class DanhSachNguoiDung implements IDanhSach {
     @Override
     public void nhapDanhSachTuFile() throws IOException {
         File f = new File(LuuTru.FILEDSND);
-        if (!f.exists()) {
-            this.ds = new NguoiDung[0];
-            this.soLuong = 0;
-            return;
-        }
+        if (!f.exists()) { ds = new NguoiDung[0]; soLuong = 0; return; }
         try (DataInputStream dis = new DataInputStream(new FileInputStream(f))) {
             int n = dis.readInt();
-            NguoiDung[] tam = new NguoiDung[n];
+            ds = new NguoiDung[n > 0 ? n : 0];
+            soLuong = 0;
             for (int i = 0; i < n; i++) {
                 int loai = dis.readInt();
-                if (loai == 1) tam[i] = new SinhVien();
-                else tam[i] = new GiangVien();
-                tam[i].docFile(dis);
+                NguoiDung nd = loai == 1 ? new SinhVien() : new GiangVien();
+                nd.docFile(dis);
+                ds[soLuong++] = nd;
             }
-            this.ds = tam;
-            this.soLuong = n;
         }
     }
 
-    // ======================================================
+    // ------------------------------------
     private int timViTri(String ma) {
+        if (ma == null) return -1;
+        String key = ma.trim();
         for (int i = 0; i < soLuong; i++) {
-            if (ds[i].getMa().equals(ma)) return i;
+            if (ds[i].getMa().equalsIgnoreCase(key)) return i;
         }
         return -1;
     }
 
-    private void them(NguoiDung x) {
-        NguoiDung[] tam = new NguoiDung[soLuong + 1];
-        System.arraycopy(ds, 0, tam, 0, soLuong);
-        tam[soLuong] = x;
-        this.ds = tam;
-        this.soLuong++;
+    private void them(NguoiDung nd) {
+        if (nd == null) return;
+        ds = Arrays.copyOf(ds, soLuong + 1);
+        ds[soLuong++] = nd.saoChep();
     }
 
     private void xoa(int viTri) {
-        for (int i = viTri; i < soLuong - 1; i++) {
-            ds[i] = ds[i + 1];
-        }
+        for (int i = viTri; i < soLuong - 1; i++) ds[i] = ds[i + 1];
         soLuong--;
         ds[soLuong] = null;
+        ds = Arrays.copyOf(ds, soLuong);
     }
 
     // ======================================================
-    public boolean kiemTraMa(String ma) {
-        return timViTri(ma) != -1;
-    }
+    public boolean kiemTraMa(String ma) { return timViTri(ma) != -1; }
+
     public NguoiDung timKiemMa(String ma) {
-        int viTri = timViTri(ma);
-        return viTri == -1 ? null : ds[viTri];
+        int vt = timViTri(ma);
+        return vt == -1 ? null : ds[vt].saoChep();
     }
-    public NguoiDung docPhanTu(int viTri) {
-        if (viTri < 0 || viTri >= soLuong) return null;
-        return ds[viTri];
+
+    public NguoiDung docPhanTu(int i) {
+        return (i < 0 || i >= soLuong) ? null : ds[i].saoChep();
     }
-    public String taoMaMoi(int loai) {
-        String tienTo = loai == 1 ? "SV" : "GV";
-        int max = 0;
+
+    public NguoiDung dangNhap(String user, String pass) {
         for (int i = 0; i < soLuong; i++) {
-            String ma = ds[i].getMa();
-            if (ma != null && ma.startsWith(tienTo)) {
-                try {
-                    int so = Integer.parseInt(ma.substring(tienTo.length()));
-                    if (so > max) max = so;
-                } catch (NumberFormatException e) {
-                }
+            if (ds[i].getTenDangNhap().equals(user) && ds[i].getMatKhau().equals(pass)) {
+                return ds[i].saoChep();
             }
-        }
-        return tienTo + String.format("%03d", max + 1);
-    }
-    public NguoiDung timTheoTenDangNhap(String user) {
-        for (int i = 0; i < soLuong; i++) {
-            if (ds[i].getTenDangNhap().equals(user)) return ds[i];
         }
         return null;
     }
 
-    public NguoiDung dangNhap(String user, String pass) {
-        NguoiDung nd = timTheoTenDangNhap(user);
-        if (nd != null && nd.getMatKhau().equals(pass)) return nd;
-        return null;
+    public String taoMaMoi(int loai) {
+        String prefix = loai == 1 ? "SV" : "GV";
+        int max = 0;
+        for (int i = 0; i < soLuong; i++) {
+            String ma = ds[i].getMa();
+            if (ma.startsWith(prefix)) {
+                try {
+                    int so = Integer.parseInt(ma.substring(prefix.length()));
+                    if (so > max) max = so;
+                } catch (NumberFormatException e) {}
+            }
+        }
+        return prefix + String.format("%03d", max + 1);
     }
+
+    public void themVaoDanhSach(NguoiDung nd) { them(nd); }
+
+    // ======================================================
     @Override
     public void nhapTimKiem() {
-        String ma = NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can tim");
-        int viTri = timViTri(ma);
-        if (viTri == -1) {
-            System.out.println("Khong tim thay!");
-            return;
-        }
+        int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can tim"));
+        if (vt == -1) { System.out.println("Khong tim thay nguoi dung!"); return; }
         DanhSachNguoiDung dsTam = new DanhSachNguoiDung();
-        dsTam.them(ds[viTri]);
+        dsTam.them(ds[vt]);
         dsTam.xuatDanhSach();
     }
 
     @Override
     public void nhapThem() {
-        if (!(QuanLyDanhSach.nguoiDungHienTai instanceof QuanTriVien)) {
-            System.out.println("Chi quan tri vien duoc thao tac!");
-            return;
-        }
-        int loai = NhapChuan.docSoNguyenTrongKhoang("Loai nguoi dung (1=SV, 2=GV)", 1, 2);
+        int loai = NhapChuan.docSoNguyenTrongKhoang("Loai nguoi dung (1: Sinh vien, 2: Giang vien)", 1, 2);
         String ma = taoMaMoi(loai);
-        NguoiDung nd;
         if (loai == 1) {
             SinhVien sv = new SinhVien();
+            sv.nhap();
             sv.setMaSV(ma);
             sv.setTenDangNhap(ma);
             sv.setMatKhau("123456");
-            nd = sv;
+            them(sv);
         } else {
             GiangVien gv = new GiangVien();
+            gv.nhap();
             gv.setMaGV(ma);
             gv.setTenDangNhap(ma);
             gv.setMatKhau("123456");
-            nd = gv;
+            them(gv);
         }
-        nd.nhap();
-        them(nd);
-        System.out.println("Da them nguoi dung " + ma);
+        System.out.println("Da them nguoi dung: " + ma + " (mat khau mac dinh: 123456)");
     }
 
     @Override
     public void nhapSua() {
-        if (!(QuanLyDanhSach.nguoiDungHienTai instanceof QuanTriVien)) {
-            System.out.println("Chi quan tri vien duoc thao tac!");
-            return;
-        }
         do {
-            String ma = NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can sua");
-            int viTri = timViTri(ma);
-            if (viTri == -1) {
-                System.out.println("Khong tim thay!");
-            } else {
-                ds[viTri].nhap();
-                System.out.println("Da sua nguoi dung " + ma);
+            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can sua"));
+            if (vt == -1) { System.out.println("Khong tim thay nguoi dung!"); }
+            else {
+                ds[vt].nhap();
+                System.out.println("Da cap nhat nguoi dung!");
             }
         } while (NhapChuan.docYesNo("Co tiep tuc khong", false));
     }
 
     @Override
     public void nhapXoa() {
-        if (!(QuanLyDanhSach.nguoiDungHienTai instanceof QuanTriVien)) {
-            System.out.println("Chi quan tri vien duoc thao tac!");
-            return;
-        }
         do {
-            String ma = NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can xoa");
-            int viTri = timViTri(ma);
-            if (viTri == -1) {
-                System.out.println("Khong tim thay!");
-            } else {
-                NguoiDung nd = ds[viTri];
-                boolean biChan = false;
-                if (nd instanceof GiangVien) {
-                    biChan = QuanLyDanhSach.DS_CAUHOI.kiemTraTonTaiGiangVien(ma)
-                            || QuanLyDanhSach.DS_DETHI.kiemTraTonTaiGiangVien(ma);
-                } else if (nd instanceof SinhVien) {
-                    biChan = QuanLyDanhSach.DS_KETQUA.kiemTraTonTaiSinhVien(ma);
-                }
-                if (biChan) {
-                    System.out.println("Khong the xoa: nguoi dung dang duoc tham chieu!");
+            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma nguoi dung can xoa"));
+            if (vt == -1) { System.out.println("Khong tim thay nguoi dung!"); }
+            else {
+                String ma = ds[vt].getMa();
+                if (ds[vt] instanceof GiangVien && (QuanLyDanhSach.DS_CAUHOI.kiemTraTonTaiGiangVien(ma)
+                        || QuanLyDanhSach.DS_DETHI.kiemTraTonTaiGiangVien(ma))) {
+                    System.out.println("Khong the xoa! Giang vien dang co cau hoi hoac de thi.");
+                } else if (ds[vt] instanceof SinhVien && QuanLyDanhSach.DS_KETQUA.kiemTraTonTaiSinhVien(ma)) {
+                    System.out.println("Khong the xoa! Sinh vien da co ket qua thi.");
                 } else {
-                    xoa(viTri);
-                    System.out.println("Da xoa nguoi dung " + ma);
+                    xoa(vt);
+                    System.out.println("Da xoa nguoi dung!");
                 }
             }
         } while (NhapChuan.docYesNo("Co tiep tuc khong", false));
@@ -220,10 +187,8 @@ public class DanhSachNguoiDung implements IDanhSach {
     @Override
     public void xuatDanhSach() {
         String[][] bang = new String[soLuong + 1][5];
-        bang[0] = new String[]{"Ma", "Ho ten", "Ten dang nhap", "Vai tro", "Thong tin"};
-        for (int i = 0; i < soLuong; i++) {
-            bang[i + 1] = ds[i].xuat();
-        }
+        bang[0] = new String[]{"Ma ND", "Ho ten", "Ten dang nhap", "Vai tro", "Lop / Mon"};
+        for (int i = 0; i < soLuong; i++) bang[i + 1] = ds[i].xuat();
         FormatBang.inBangDuLieu("DANH SACH NGUOI DUNG", bang);
     }
 }

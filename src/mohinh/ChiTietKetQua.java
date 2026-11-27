@@ -3,6 +3,7 @@ package mohinh;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import rangbuoc.ITruyXuatMoHinh;
 import tienich.NhapChuan;
 
@@ -22,7 +23,6 @@ public class ChiTietKetQua implements ITruyXuatMoHinh {
     }
 
     public ChiTietKetQua(String maKQ, String maCH, String traLoi, String dapAnDung, double diemDatDuoc) {
-        this();
         if (!setMaKQ(maKQ)) this.maKQ = "";
         if (!setMaCH(maCH)) this.maCH = "";
         if (!setTraLoi(traLoi)) this.traLoi = "";
@@ -44,7 +44,7 @@ public class ChiTietKetQua implements ITruyXuatMoHinh {
 
     @Override
     public String[] xuat() {
-        return new String[]{maKQ, maCH, traLoi, dapAnDung, String.format("%.2f", diemDatDuoc)};
+        return new String[]{maKQ, maCH, traLoi, dapAnDung, String.format(Locale.US, "%.2f", diemDatDuoc)};
     }
 
     @Override
@@ -53,9 +53,7 @@ public class ChiTietKetQua implements ITruyXuatMoHinh {
         setMaCH(NhapChuan.docChuoiKhongRong("Ma cau hoi"));
         setTraLoi(NhapChuan.docChuoi("Tra loi"));
         setDapAnDung(NhapChuan.docChuoiKhongRong("Dap an dung"));
-        while (!setDiemDatDuoc(NhapChuan.docSoThuc("Diem dat duoc"))) {
-            System.out.println("Diem dat duoc phai lon hon hoac bang 0!");
-        }
+        setDiemDatDuoc(NhapChuan.docSoThucKhongAm("Diem dat duoc"));
         return this;
     }
 

@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import rangbuoc.ITruyXuatMoHinh;
 import tienich.NhapChuan;
 
@@ -23,19 +24,18 @@ public class KetQuaThi implements ITruyXuatMoHinh {
         this.maDe = "";
         this.ngayThi = LocalDateTime.now();
         this.soCauDung = 0;
-        this.tongSoCau = 1;
+        this.tongSoCau = 0;
         this.diem = 0;
         this.thoiGianGiay = 0;
     }
 
     public KetQuaThi(String maKQ, String maSV, String maDe, LocalDateTime ngayThi, int soCauDung, int tongSoCau, double diem, long thoiGianGiay) {
-        this();
         if (!setMaKQ(maKQ)) this.maKQ = "";
         if (!setMaSV(maSV)) this.maSV = "";
         if (!setMaDe(maDe)) this.maDe = "";
         if (!setNgayThi(ngayThi)) this.ngayThi = LocalDateTime.now();
         if (!setSoCauDung(soCauDung)) this.soCauDung = 0;
-        if (!setTongSoCau(tongSoCau)) this.tongSoCau = 1;
+        if (!setTongSoCau(tongSoCau)) this.tongSoCau = 0;
         if (!setDiem(diem)) this.diem = 0;
         if (!setThoiGianGiay(thoiGianGiay)) this.thoiGianGiay = 0;
     }
@@ -57,22 +57,21 @@ public class KetQuaThi implements ITruyXuatMoHinh {
 
     @Override
     public String[] xuat() {
-        return new String[]{maKQ, maSV, maDe, ngayThi.format(NhapChuan.DINH_DANG), String.valueOf(soCauDung), String.valueOf(tongSoCau), String.format("%.2f", diem), String.valueOf(thoiGianGiay)};
+        String ngay = ngayThi == null ? "" : ngayThi.format(NhapChuan.DINH_DANG);
+        return new String[]{maKQ, maSV, maDe, ngay, soCauDung + "/" + tongSoCau, String.format(Locale.US, "%.2f", diem), thoiGianGiay + "s"};
     }
 
     @Override
     public ITruyXuatMoHinh nhap() {
         setMaSV(NhapChuan.docChuoiKhongRong("Ma sinh vien"));
-        setMaDe(NhapChuan.docChuoiKhongRong("Ma de"));
+        setMaDe(NhapChuan.docChuoiKhongRong("Ma de thi"));
         setNgayThi(NhapChuan.docNgayGio("Ngay thi"));
         setSoCauDung(NhapChuan.docSoNguyenKhongAm("So cau dung"));
         while (!setTongSoCau(NhapChuan.docSoNguyen("Tong so cau"))) {
             System.out.println("Tong so cau phai lon hon 0!");
         }
-        while (!setDiem(NhapChuan.docSoThuc("Diem"))) {
-            System.out.println("Diem phai lon hon hoac bang 0!");
-        }
-        setThoiGianGiay(NhapChuan.docSoNguyenKhongAm("Thoi gian giay"));
+        setDiem(NhapChuan.docSoThucKhongAm("Diem"));
+        setThoiGianGiay(NhapChuan.docSoNguyenKhongAm("Thoi gian lam (giay)"));
         return this;
     }
 
@@ -81,7 +80,7 @@ public class KetQuaThi implements ITruyXuatMoHinh {
         dos.writeUTF(maKQ == null ? "" : maKQ);
         dos.writeUTF(maSV == null ? "" : maSV);
         dos.writeUTF(maDe == null ? "" : maDe);
-        dos.writeUTF(ngayThi.format(NhapChuan.DINH_DANG));
+        dos.writeUTF((ngayThi == null ? LocalDateTime.now() : ngayThi).format(NhapChuan.DINH_DANG));
         dos.writeInt(soCauDung);
         dos.writeInt(tongSoCau);
         dos.writeDouble(diem);

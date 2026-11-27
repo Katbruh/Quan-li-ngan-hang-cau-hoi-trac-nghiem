@@ -3,6 +3,7 @@ package mohinh;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import rangbuoc.ITruyXuatMoHinh;
 import tienich.NhapChuan;
 
@@ -14,14 +15,13 @@ public class ChiTietDeThi implements ITruyXuatMoHinh {
     public ChiTietDeThi() {
         this.maDe = "";
         this.maCH = "";
-        this.diemToiDa = 1.0;
+        this.diemToiDa = 0;
     }
 
     public ChiTietDeThi(String maDe, String maCH, double diemToiDa) {
-        this();
         if (!setMaDe(maDe)) this.maDe = "";
         if (!setMaCH(maCH)) this.maCH = "";
-        if (!setDiemToiDa(diemToiDa)) this.diemToiDa = 1.0;
+        if (!setDiemToiDa(diemToiDa)) this.diemToiDa = 0;
     }
 
     public ChiTietDeThi(ChiTietDeThi x) {
@@ -36,12 +36,12 @@ public class ChiTietDeThi implements ITruyXuatMoHinh {
 
     @Override
     public String[] xuat() {
-        return new String[]{maDe, maCH, String.format("%.2f", diemToiDa)};
+        return new String[]{maDe, maCH, String.format(Locale.US, "%.2f", diemToiDa)};
     }
 
     @Override
     public ITruyXuatMoHinh nhap() {
-        setMaDe(NhapChuan.docChuoiKhongRong("Ma de"));
+        setMaDe(NhapChuan.docChuoiKhongRong("Ma de thi"));
         setMaCH(NhapChuan.docChuoiKhongRong("Ma cau hoi"));
         while (!setDiemToiDa(NhapChuan.docSoThuc("Diem toi da"))) {
             System.out.println("Diem toi da phai lon hon 0!");

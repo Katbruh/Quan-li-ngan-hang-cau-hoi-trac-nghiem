@@ -25,7 +25,7 @@ public class DeThi implements ITruyXuatMoHinh {
         this.tenDe = "";
         this.maMonHoc = "";
         this.loaiCauHoi = 1;
-        this.thoiGian = 1;
+        this.thoiGian = 0;
         this.ngayThi = LocalDateTime.now();
         this.ngayTao = LocalDateTime.now();
         this.maKyThi = "";
@@ -34,14 +34,14 @@ public class DeThi implements ITruyXuatMoHinh {
         this.maGV = "";
     }
 
-    public DeThi(String maDe, String tenDe, String maMonHoc, int loaiCauHoi, int thoiGian, LocalDateTime ngayThi, String maKyThi, String loaiDoiTuong, String doiTuong, String maGV) {
-        this();
+    public DeThi(String maDe, String tenDe, String maMonHoc, int loaiCauHoi, int thoiGian, LocalDateTime ngayThi, LocalDateTime ngayTao, String maKyThi, String loaiDoiTuong, String doiTuong, String maGV) {
         if (!setMaDe(maDe)) this.maDe = "";
         if (!setTenDe(tenDe)) this.tenDe = "";
         if (!setMaMonHoc(maMonHoc)) this.maMonHoc = "";
         if (!setLoaiCauHoi(loaiCauHoi)) this.loaiCauHoi = 1;
-        if (!setThoiGian(thoiGian)) this.thoiGian = 1;
+        if (!setThoiGian(thoiGian)) this.thoiGian = 0;
         if (!setNgayThi(ngayThi)) this.ngayThi = LocalDateTime.now();
+        if (!setNgayTao(ngayTao)) this.ngayTao = LocalDateTime.now();
         if (!setMaKyThi(maKyThi)) this.maKyThi = "";
         if (!setLoaiDoiTuong(loaiDoiTuong)) this.loaiDoiTuong = "LOP";
         if (!setDoiTuong(doiTuong)) this.doiTuong = "";
@@ -68,18 +68,21 @@ public class DeThi implements ITruyXuatMoHinh {
 
     @Override
     public String[] xuat() {
-        return new String[]{maDe, tenDe, maMonHoc, String.valueOf(loaiCauHoi), String.valueOf(thoiGian), ngayThi.format(NhapChuan.DINH_DANG), maKyThi, loaiDoiTuong, doiTuong, maGV};
+        String loai = loaiCauHoi == 1 ? "Mot dap an" : (loaiCauHoi == 2 ? "Nhieu dap an" : "Dung/Sai");
+        String ngay = ngayThi == null ? "" : ngayThi.format(NhapChuan.DINH_DANG);
+        return new String[]{maDe, tenDe, maMonHoc, loai, thoiGian + " phut", ngay, maKyThi, loaiDoiTuong + ": " + doiTuong, maGV};
     }
 
     @Override
     public ITruyXuatMoHinh nhap() {
-        setTenDe(NhapChuan.docChuoiKhongRong("Ten de"));
+        setTenDe(NhapChuan.docChuoiKhongRong("Ten de thi"));
         setMaMonHoc(NhapChuan.docChuoiKhongRong("Ma mon hoc"));
-        setLoaiCauHoi(NhapChuan.docSoNguyenTrongKhoang("Loai cau hoi (1/2/3)", 1, 3));
-        while (!setThoiGian(NhapChuan.docSoNguyen("Thoi gian (phut)"))) {
+        setLoaiCauHoi(NhapChuan.docSoNguyenTrongKhoang("Loai cau hoi (1: Mot DA, 2: Nhieu DA, 3: Dung/Sai)", 1, 3));
+        while (!setThoiGian(NhapChuan.docSoNguyen("Thoi gian lam bai (phut)"))) {
             System.out.println("Thoi gian phai lon hon 0!");
         }
         setNgayThi(NhapChuan.docNgayGio("Ngay thi"));
+        this.ngayTao = LocalDateTime.now();
         setMaKyThi(NhapChuan.docChuoiKhongRong("Ma ky thi"));
         while (!setLoaiDoiTuong(NhapChuan.docChuoiKhongRong("Loai doi tuong (LOP/SINH_VIEN)"))) {
             System.out.println("Chi nhap LOP hoac SINH_VIEN!");
@@ -95,8 +98,8 @@ public class DeThi implements ITruyXuatMoHinh {
         dos.writeUTF(maMonHoc == null ? "" : maMonHoc);
         dos.writeInt(loaiCauHoi);
         dos.writeInt(thoiGian);
-        dos.writeUTF(ngayThi.format(NhapChuan.DINH_DANG));
-        dos.writeUTF(ngayTao.format(NhapChuan.DINH_DANG));
+        dos.writeUTF((ngayThi == null ? LocalDateTime.now() : ngayThi).format(NhapChuan.DINH_DANG));
+        dos.writeUTF((ngayTao == null ? LocalDateTime.now() : ngayTao).format(NhapChuan.DINH_DANG));
         dos.writeUTF(maKyThi == null ? "" : maKyThi);
         dos.writeUTF(loaiDoiTuong == null ? "" : loaiDoiTuong);
         dos.writeUTF(doiTuong == null ? "" : doiTuong);
@@ -130,70 +133,22 @@ public class DeThi implements ITruyXuatMoHinh {
     public String getDoiTuong() { return doiTuong; }
     public String getMaGV() { return maGV; }
 
-    public boolean setMaDe(String maDe) {
-        if (maDe == null || maDe.trim().isEmpty()) return false;
-        this.maDe = maDe.trim();
-        return true;
-    }
-
-    public boolean setTenDe(String tenDe) {
-        if (tenDe == null || tenDe.trim().isEmpty()) return false;
-        this.tenDe = tenDe.trim();
-        return true;
-    }
-
-    public boolean setMaMonHoc(String maMonHoc) {
-        if (maMonHoc == null || maMonHoc.trim().isEmpty()) return false;
-        this.maMonHoc = maMonHoc.trim();
-        return true;
-    }
-
-    public boolean setLoaiCauHoi(int loaiCauHoi) {
-        if (loaiCauHoi < 1 || loaiCauHoi > 3) return false;
-        this.loaiCauHoi = loaiCauHoi;
-        return true;
-    }
-
-    public boolean setThoiGian(int thoiGian) {
-        if (thoiGian <= 0) return false;
-        this.thoiGian = thoiGian;
-        return true;
-    }
-
-    public boolean setNgayThi(LocalDateTime ngayThi) {
-        if (ngayThi == null) return false;
-        this.ngayThi = ngayThi;
-        return true;
-    }
-
-    public boolean setNgayTao(LocalDateTime ngayTao) {
-        if (ngayTao == null) return false;
-        this.ngayTao = ngayTao;
-        return true;
-    }
-    public boolean setMaKyThi(String maKyThi) {
-        if (maKyThi == null || maKyThi.trim().isEmpty()) return false;
-        this.maKyThi = maKyThi.trim();
-        return true;
-    }
+    public boolean setMaDe(String maDe) { if (maDe == null || maDe.trim().isEmpty()) return false; this.maDe = maDe.trim(); return true; }
+    public boolean setTenDe(String tenDe) { if (tenDe == null || tenDe.trim().isEmpty()) return false; this.tenDe = tenDe.trim(); return true; }
+    public boolean setMaMonHoc(String maMonHoc) { if (maMonHoc == null || maMonHoc.trim().isEmpty()) return false; this.maMonHoc = maMonHoc.trim(); return true; }
+    public boolean setLoaiCauHoi(int loaiCauHoi) { if (loaiCauHoi < 1 || loaiCauHoi > 3) return false; this.loaiCauHoi = loaiCauHoi; return true; }
+    public boolean setThoiGian(int thoiGian) { if (thoiGian <= 0) return false; this.thoiGian = thoiGian; return true; }
+    public boolean setNgayThi(LocalDateTime ngayThi) { if (ngayThi == null) return false; this.ngayThi = ngayThi; return true; }
+    public boolean setNgayTao(LocalDateTime ngayTao) { if (ngayTao == null) return false; this.ngayTao = ngayTao; return true; }
+    public boolean setMaKyThi(String maKyThi) { if (maKyThi == null || maKyThi.trim().isEmpty()) return false; this.maKyThi = maKyThi.trim(); return true; }
+    public boolean setDoiTuong(String doiTuong) { if (doiTuong == null || doiTuong.trim().isEmpty()) return false; this.doiTuong = doiTuong.trim(); return true; }
+    public boolean setMaGV(String maGV) { if (maGV == null || maGV.trim().isEmpty()) return false; this.maGV = maGV.trim(); return true; }
 
     public boolean setLoaiDoiTuong(String loaiDoiTuong) {
         if (loaiDoiTuong == null) return false;
         String s = loaiDoiTuong.trim().toUpperCase();
         if (!s.equals("LOP") && !s.equals("SINH_VIEN")) return false;
         this.loaiDoiTuong = s;
-        return true;
-    }
-
-    public boolean setDoiTuong(String doiTuong) {
-        if (doiTuong == null || doiTuong.trim().isEmpty()) return false;
-        this.doiTuong = doiTuong.trim();
-        return true;
-    }
-
-    public boolean setMaGV(String maGV) {
-        if (maGV == null || maGV.trim().isEmpty()) return false;
-        this.maGV = maGV.trim();
         return true;
     }
 }

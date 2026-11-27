@@ -22,7 +22,7 @@ public class CauHoiDungSai extends CauHoi {
 
     public CauHoiDungSai(CauHoiDungSai x) {
         super(x);
-        this.dapAnDung = Arrays.copyOf(x.dapAnDung, 4);
+        this.dapAnDung = x.dapAnDung == null ? new boolean[4] : Arrays.copyOf(x.dapAnDung, 4);
     }
 
     @Override
@@ -32,32 +32,25 @@ public class CauHoiDungSai extends CauHoi {
 
     @Override
     public String[] xuat() {
-        String[] coBan = super.xuat();
-        String[] ketQua = Arrays.copyOf(coBan, coBan.length + 2);
-        ketQua[coBan.length] = "Dung/Sai";
-        ketQua[coBan.length + 1] = getDapAnChuan();
-        return ketQua;
+        String[] goc = super.xuat();
+        String[] kq = Arrays.copyOf(goc, goc.length + 2);
+        kq[goc.length] = "Dung/Sai";
+        kq[goc.length + 1] = getDapAnChuan();
+        return kq;
     }
 
     @Override
     public ITruyXuatMoHinh nhap() {
         super.nhap();
-        boolean[] mang = new boolean[4];
+        boolean[] ds = new boolean[4];
         for (int i = 0; i < 4; i++) {
-            while (true) {
-                String s = NhapChuan.docChuoi("Y " + (char) ('A' + i) + " (D/S)").toUpperCase();
-                if (s.equals("D")) {
-                    mang[i] = true;
-                    break;
-                }
-                if (s.equals("S")) {
-                    mang[i] = false;
-                    break;
-                }
-                System.out.println("Chi nhap D hoac S!");
-            }
+            char c;
+            do {
+                c = NhapChuan.docDungSai("Dap an y " + (char) ('A' + i));
+            } while (c == '-');
+            ds[i] = (c == 'D');
         }
-        setDapAnDung(mang);
+        setDapAnDung(ds);
         return this;
     }
 
@@ -72,23 +65,22 @@ public class CauHoiDungSai extends CauHoi {
     @Override
     public void docFile(DataInputStream dis) throws IOException {
         super.docFile(dis);
+        this.dapAnDung = new boolean[4];
         for (int i = 0; i < 4; i++) {
             this.dapAnDung[i] = dis.readBoolean();
         }
     }
 
     public boolean[] getDapAnDung() { return Arrays.copyOf(dapAnDung, 4); }
-
-    @Override
-    public int getLoaiCauHoi() { return 3; }
+    @Override public int getLoaiCauHoi() { return 3; }
 
     @Override
     public String getDapAnChuan() {
-        StringBuilder sb = new StringBuilder();
+        String kq = "";
         for (int i = 0; i < 4; i++) {
-            sb.append(dapAnDung[i] ? 'D' : 'S');
+            kq += dapAnDung[i] ? 'D' : 'S';
         }
-        return sb.toString();
+        return kq;
     }
 
     public boolean setDapAnDung(boolean[] dapAnDung) {
@@ -100,19 +92,20 @@ public class CauHoiDungSai extends CauHoi {
     @Override
     public double chamDiem(String traLoi, double diemToiDa) {
         if (traLoi == null) return 0;
-        String chuan = traLoi.trim().toUpperCase();
+        String s = traLoi.trim().toUpperCase();
         int soKhop = 0;
-        for (int i = 0; i < 4; i++) {
-            char c = i < chuan.length() ? chuan.charAt(i) : '-';
-            if ((c == 'D' && dapAnDung[i]) || (c == 'S' && !dapAnDung[i])) {
-                soKhop++;
-            }
+        int n = Math.min(4, s.length());
+        for (int i = 0; i < n; i++) {
+            char c = s.charAt(i);
+            if ((c == 'D' && dapAnDung[i]) || (c == 'S' && !dapAnDung[i])) soKhop++;
         }
-        // so y khop: 1 -> 0.1, 2 -> 0.25, 3 -> 0.5, 4 -> 1.0
-        if (soKhop == 1) return 0.1 * diemToiDa;
-        if (soKhop == 2) return 0.25 * diemToiDa;
-        if (soKhop == 3) return 0.5 * diemToiDa;
-        if (soKhop == 4) return 1.0 * diemToiDa;
-        return 0;
+        // cham diem theo so y khop: 1 y 10%, 2 y 25%, 3 y 50%, 4 y 100%
+        switch (soKhop) {
+            case 1: return 0.1 * diemToiDa;
+            case 2: return 0.25 * diemToiDa;
+            case 3: return 0.5 * diemToiDa;
+            case 4: return diemToiDa;
+            default: return 0;
+        }
     }
 }

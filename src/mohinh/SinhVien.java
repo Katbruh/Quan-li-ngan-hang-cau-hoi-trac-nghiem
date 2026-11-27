@@ -36,10 +36,10 @@ public class SinhVien extends NguoiDung {
 
     @Override
     public String[] xuat() {
-        String[] coBan = super.xuat();
-        String[] ketQua = Arrays.copyOf(coBan, coBan.length + 1);
-        ketQua[coBan.length] = lop;
-        return ketQua;
+        String[] goc = super.xuat();
+        String[] kq = Arrays.copyOf(goc, goc.length + 1);
+        kq[goc.length] = lop;
+        return kq;
     }
 
     @Override
@@ -65,12 +65,8 @@ public class SinhVien extends NguoiDung {
 
     public String getMaSV() { return maSV; }
     public String getLop() { return lop; }
-
-    @Override
-    public String getVaiTro() { return "Sinh vien"; }
-
-    @Override
-    public String getMa() { return maSV; }
+    @Override public String getVaiTro() { return "Sinh vien"; }
+    @Override public String getMa() { return maSV; }
 
     public boolean setMaSV(String maSV) {
         if (maSV == null || maSV.trim().isEmpty()) return false;

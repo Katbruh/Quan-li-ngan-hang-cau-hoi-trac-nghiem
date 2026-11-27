@@ -32,16 +32,16 @@ public class QuanTriVien extends NguoiDung {
 
     @Override
     public String[] xuat() {
-        String[] coBan = super.xuat();
-        String[] ketQua = Arrays.copyOf(coBan, coBan.length + 1);
-        ketQua[coBan.length] = "Toan quyen";
-        return ketQua;
+        String[] goc = super.xuat();
+        String[] kq = Arrays.copyOf(goc, goc.length + 1);
+        kq[goc.length] = "Toan quyen";
+        return kq;
     }
 
     @Override
     public ITruyXuatMoHinh nhap() {
         super.nhap();
-        setMaQTV(NhapChuan.docChuoiKhongRong("Ma quan tri vien"));
+        setMaQTV(NhapChuan.docChuoiKhongRong("Ma QTV"));
         return this;
     }
 
@@ -58,12 +58,8 @@ public class QuanTriVien extends NguoiDung {
     }
 
     public String getMaQTV() { return maQTV; }
-
-    @Override
-    public String getVaiTro() { return "Quan tri vien"; }
-
-    @Override
-    public String getMa() { return maQTV; }
+    @Override public String getVaiTro() { return "Quan tri vien"; }
+    @Override public String getMa() { return maQTV; }
 
     public boolean setMaQTV(String maQTV) {
         if (maQTV == null || maQTV.trim().isEmpty()) return false;

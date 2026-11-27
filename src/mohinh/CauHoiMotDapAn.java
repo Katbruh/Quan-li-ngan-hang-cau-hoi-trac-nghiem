@@ -32,22 +32,20 @@ public class CauHoiMotDapAn extends CauHoi {
 
     @Override
     public String[] xuat() {
-        String[] coBan = super.xuat();
-        String[] ketQua = Arrays.copyOf(coBan, coBan.length + 2);
-        ketQua[coBan.length] = "Mot dap an";
-        ketQua[coBan.length + 1] = getDapAnChuan();
-        return ketQua;
+        String[] goc = super.xuat();
+        String[] kq = Arrays.copyOf(goc, goc.length + 2);
+        kq[goc.length] = "Mot dap an";
+        kq[goc.length + 1] = getDapAnChuan();
+        return kq;
     }
 
     @Override
     public ITruyXuatMoHinh nhap() {
         super.nhap();
         while (true) {
-            String s = NhapChuan.docChuoi("Dap an dung (A/B/C/D)").toUpperCase();
-            if (s.length() == 1 && setDapAnDung(s.charAt(0))) {
-                break;
-            }
-            System.out.println("Vui long nhap A, B, C hoac D!");
+            String s = NhapChuan.docChuoiKhongRong("Dap an dung (A/B/C/D)");
+            if (s.length() == 1 && setDapAnDung(s.charAt(0))) break;
+            System.out.println("Chi duoc nhap 1 ky tu A, B, C hoac D!");
         }
         return this;
     }
@@ -65,25 +63,20 @@ public class CauHoiMotDapAn extends CauHoi {
     }
 
     public char getDapAnDung() { return dapAnDung; }
-
-    @Override
-    public int getLoaiCauHoi() { return 1; }
-
-    @Override
-    public String getDapAnChuan() { return String.valueOf(dapAnDung); }
+    @Override public int getLoaiCauHoi() { return 1; }
+    @Override public String getDapAnChuan() { return String.valueOf(dapAnDung); }
 
     public boolean setDapAnDung(char dapAnDung) {
-        char chuan = Character.toUpperCase(dapAnDung);
-        if (chuan < 'A' || chuan > 'D') return false;
-        this.dapAnDung = chuan;
+        char c = Character.toUpperCase(dapAnDung);
+        if (c < 'A' || c > 'D') return false;
+        this.dapAnDung = c;
         return true;
     }
 
     @Override
     public double chamDiem(String traLoi, double diemToiDa) {
         if (traLoi == null) return 0;
-        String chuan = traLoi.trim().toUpperCase();
-        if (chuan.equals(String.valueOf(dapAnDung))) return diemToiDa;
-        return 0;
+        String s = traLoi.trim().toUpperCase();
+        return s.equals(String.valueOf(dapAnDung)) ? diemToiDa : 0;
     }
 }

@@ -36,10 +36,10 @@ public class GiangVien extends NguoiDung {
 
     @Override
     public String[] xuat() {
-        String[] coBan = super.xuat();
-        String[] ketQua = Arrays.copyOf(coBan, coBan.length + 1);
-        ketQua[coBan.length] = maMonHoc;
-        return ketQua;
+        String[] goc = super.xuat();
+        String[] kq = Arrays.copyOf(goc, goc.length + 1);
+        kq[goc.length] = maMonHoc;
+        return kq;
     }
 
     @Override
@@ -65,12 +65,8 @@ public class GiangVien extends NguoiDung {
 
     public String getMaGV() { return maGV; }
     public String getMaMonHoc() { return maMonHoc; }
-
-    @Override
-    public String getVaiTro() { return "Giang vien"; }
-
-    @Override
-    public String getMa() { return maGV; }
+    @Override public String getVaiTro() { return "Giang vien"; }
+    @Override public String getMa() { return maGV; }
 
     public boolean setMaGV(String maGV) {
         if (maGV == null || maGV.trim().isEmpty()) return false;
