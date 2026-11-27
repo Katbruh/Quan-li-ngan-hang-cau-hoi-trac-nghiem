@@ -1,11 +1,7 @@
 bin/
 out/
-out_audit/
 *.class
 .idea/
 *.iml
 .vscode/
 .DS_Store
-old_data/
-.opencode/
-opencode.json
