@@ -133,7 +133,9 @@ public class DanhSachDeThi implements IDanhSach {
     @Override
     public void nhapSua() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma de thi can sua"));
+            String ma = NhapChuan.docChuoi("Nhap ma de thi can sua (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay de thi!"); }
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
@@ -141,7 +143,15 @@ public class DanhSachDeThi implements IDanhSach {
             } else if (QuanLyDanhSach.DS_KETQUA.kiemTraTonTaiDeThi(ds[vt].getMaDe())) {
                 System.out.println("Khong the sua! De thi da co sinh vien thi.");
             } else {
+                String maMonCu = ds[vt].getMaMonHoc();
+                int loaiCu = ds[vt].getLoaiCauHoi();
+                boolean daCoCau = QuanLyDanhSach.DS_CHITIETDETHI.demTheoMa(ds[vt].getMaDe()) > 0;
                 ds[vt].nhap();
+                if (daCoCau) {
+                    ds[vt].setMaMonHoc(maMonCu);
+                    ds[vt].setLoaiCauHoi(loaiCu);
+                    System.out.println("De da co cau hoi nen giu nguyen mon (" + maMonCu + ") va loai cau hoi!");
+                }
                 System.out.println("Da cap nhat de thi!");
             }
         } while (NhapChuan.docYesNo("Co tiep tuc khong", false));
@@ -151,7 +161,9 @@ public class DanhSachDeThi implements IDanhSach {
     @Override
     public void nhapXoa() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma de thi can xoa"));
+            String ma = NhapChuan.docChuoi("Nhap ma de thi can xoa (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay de thi!"); }
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
@@ -169,9 +181,14 @@ public class DanhSachDeThi implements IDanhSach {
 
     @Override
     public void xuatDanhSach() {
-        String[][] bang = new String[soLuong + 1][9];
+        String maGV = QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien ? QuanLyDanhSach.nguoiDungHienTai.getMa() : null;
+        String[][] bang = new String[1][9];
         bang[0] = new String[]{"Ma de", "Ten de", "Ma mon", "Loai", "Thoi gian", "Ngay thi", "Ky thi", "Doi tuong", "Ma GV"};
-        for (int i = 0; i < soLuong; i++) bang[i + 1] = ds[i].xuat();
+        for (int i = 0; i < soLuong; i++) {
+            if (maGV != null && !ds[i].getMaGV().equalsIgnoreCase(maGV)) continue;
+            bang = Arrays.copyOf(bang, bang.length + 1);
+            bang[bang.length - 1] = ds[i].xuat();
+        }
         FormatBang.inBangDuLieu("DANH SACH DE THI", bang);
     }
 }

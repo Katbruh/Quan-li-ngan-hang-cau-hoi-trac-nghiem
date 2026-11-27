@@ -18,9 +18,7 @@ public class DanhSachCauHoi implements IDanhSach {
     public DanhSachCauHoi(DanhSachCauHoi x) {
         this.soLuong = x.soLuong;
         this.ds = new CauHoi[x.soLuong];
-        for (int i = 0; i < x.soLuong; i++) {
-            this.ds[i] = x.ds[i].saoChep();
-        }
+        for (int i = 0; i < x.soLuong; i++) this.ds[i] = x.ds[i].saoChep();
     }
 
     @Override
@@ -63,9 +61,7 @@ public class DanhSachCauHoi implements IDanhSach {
     private int timViTri(String maCH) {
         if (maCH == null) return -1;
         String key = maCH.trim();
-        for (int i = 0; i < soLuong; i++) {
-            if (ds[i].getMaCH().equalsIgnoreCase(key)) return i;
-        }
+        for (int i = 0; i < soLuong; i++) { if (ds[i].getMaCH().equalsIgnoreCase(key)) return i; }
         return -1;
     }
 
@@ -90,14 +86,10 @@ public class DanhSachCauHoi implements IDanhSach {
         return vt == -1 ? null : ds[vt].saoChep();
     }
 
-    public CauHoi docPhanTu(int i) {
-        return (i < 0 || i >= soLuong) ? null : ds[i].saoChep();
-    }
+    public CauHoi docPhanTu(int i) { return (i < 0 || i >= soLuong) ? null : ds[i].saoChep(); }
 
     public boolean kiemTraTonTaiGiangVien(String maGV) {
-        for (int i = 0; i < soLuong; i++) {
-            if (ds[i].getMaGV().equalsIgnoreCase(maGV)) return true;
-        }
+        for (int i = 0; i < soLuong; i++) { if (ds[i].getMaGV().equalsIgnoreCase(maGV)) return true; }
         return false;
     }
 
@@ -107,10 +99,7 @@ public class DanhSachCauHoi implements IDanhSach {
         for (int i = 0; i < soLuong; i++) {
             String ma = ds[i].getMaCH();
             if (ma.startsWith(prefix)) {
-                try {
-                    int so = Integer.parseInt(ma.substring(prefix.length()));
-                    if (so > max) max = so;
-                } catch (NumberFormatException e) {}
+                try { int so = Integer.parseInt(ma.substring(prefix.length())); if (so > max) max = so; } catch (NumberFormatException e) {}
             }
         }
         return prefix + String.format("%03d", max + 1);
@@ -139,9 +128,16 @@ public class DanhSachCauHoi implements IDanhSach {
         ch.nhap();
         ch.setMaCH(taoMaMoi(loai));
         if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien) {
-            ch.setMaGV(QuanLyDanhSach.nguoiDungHienTai.getMa());
+            GiangVien gv = (GiangVien) QuanLyDanhSach.nguoiDungHienTai;
+            ch.setMaGV(gv.getMa());
+            ch.setMaMonHoc(gv.getMaMonHoc());
         } else {
-            ch.setMaGV(NhapChuan.docChuoiKhongRong("Ma giang vien"));
+            String maGV = NhapChuan.docChuoiKhongRong("Ma giang vien");
+            if (!(QuanLyDanhSach.DS_NGUOIDUNG.timKiemMa(maGV) instanceof GiangVien)) {
+                System.out.println("Khong tim thay giang vien " + maGV + "!");
+                return;
+            }
+            ch.setMaGV(maGV);
         }
         them(ch);
         System.out.println("Da them cau hoi: " + ch.getMaCH());
@@ -150,11 +146,15 @@ public class DanhSachCauHoi implements IDanhSach {
     @Override
     public void nhapSua() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma cau hoi can sua"));
+            String ma = NhapChuan.docChuoi("Nhap ma cau hoi can sua (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay cau hoi!"); }
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
                 System.out.println("Ban chi duoc sua cau hoi cua minh!");
+            } else if (QuanLyDanhSach.DS_CHITIETDETHI.kiemTraTonTaiCauHoi(ds[vt].getMaCH())) {
+                System.out.println("Khong the sua! Cau hoi dang co trong de thi.");
             } else {
                 ds[vt].nhap();
                 System.out.println("Da cap nhat cau hoi!");
@@ -165,7 +165,9 @@ public class DanhSachCauHoi implements IDanhSach {
     @Override
     public void nhapXoa() {
         do {
-            int vt = timViTri(NhapChuan.docChuoiKhongRong("Nhap ma cau hoi can xoa"));
+            String ma = NhapChuan.docChuoi("Nhap ma cau hoi can xoa (Enter de huy)");
+            if (ma.isEmpty()) break;
+            int vt = timViTri(ma);
             if (vt == -1) { System.out.println("Khong tim thay cau hoi!"); }
             else if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien
                     && !ds[vt].getMaGV().equalsIgnoreCase(QuanLyDanhSach.nguoiDungHienTai.getMa())) {
@@ -181,9 +183,14 @@ public class DanhSachCauHoi implements IDanhSach {
 
     @Override
     public void xuatDanhSach() {
-        String[][] bang = new String[soLuong + 1][6];
+        String maGV = QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien ? QuanLyDanhSach.nguoiDungHienTai.getMa() : null;
+        String[][] bang = new String[1][6];
         bang[0] = new String[]{"Ma CH", "Ma mon", "Noi dung", "Ma GV", "Loai", "Dap an"};
-        for (int i = 0; i < soLuong; i++) bang[i + 1] = ds[i].xuat();
+        for (int i = 0; i < soLuong; i++) {
+            if (maGV != null && !ds[i].getMaGV().equalsIgnoreCase(maGV)) continue;
+            bang = Arrays.copyOf(bang, bang.length + 1);
+            bang[bang.length - 1] = ds[i].xuat();
+        }
         FormatBang.inBangDuLieu("DANH SACH CAU HOI", bang);
     }
 }

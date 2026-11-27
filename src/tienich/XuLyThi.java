@@ -4,25 +4,22 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
-import mohinh.CauHoi;
-import mohinh.ChiTietDeThi;
-import mohinh.ChiTietKetQua;
-import mohinh.DeThi;
-import mohinh.GiangVien;
-import mohinh.KetQuaThi;
-import mohinh.SinhVien;
+import mohinh.*;
 
 public final class XuLyThi {
-    private XuLyThi() {
-    }
+    private XuLyThi() {}
 
     // tao de thi moi va chon ngau nhien cau hoi khong trung
     public static void taoDeThi() {
         boolean laGV = QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien;
         String maGV = laGV ? QuanLyDanhSach.nguoiDungHienTai.getMa() : NhapChuan.docChuoiKhongRong("Ma giang vien");
+        if (!laGV && !(QuanLyDanhSach.DS_NGUOIDUNG.timKiemMa(maGV) instanceof GiangVien)) {
+            System.out.println("Khong tim thay giang vien " + maGV + "!");
+            return;
+        }
         int loai = NhapChuan.docSoNguyenTrongKhoang("Loai cau hoi (1: Mot DA, 2: Nhieu DA, 3: Dung/Sai)", 1, 3);
         String tenDe = NhapChuan.docChuoiKhongRong("Ten de thi");
-        String maMon = NhapChuan.docChuoiKhongRong("Ma mon hoc");
+        String maMon = laGV ? ((GiangVien) QuanLyDanhSach.nguoiDungHienTai).getMaMonHoc() : NhapChuan.docChuoiKhongRong("Ma mon hoc");
         CauHoi[] nguon = new CauHoi[0];
         for (int i = 0; i < QuanLyDanhSach.DS_CAUHOI.getSoLuong(); i++) {
             CauHoi ch = QuanLyDanhSach.DS_CAUHOI.docPhanTu(i);
@@ -43,6 +40,7 @@ public final class XuLyThi {
             System.out.println("Chi nhap LOP hoac SINH_VIEN!");
         }
         String doiTuong = NhapChuan.docChuoiKhongRong("Doi tuong (Ten lop hoac DS ma SV)");
+        canhBaoDoiTuongRong(loaiDT, doiTuong);
         int maxCau = Math.min(50, nguon.length);
         int soCau = NhapChuan.docSoNguyenTrongKhoang("So cau hoi (1.." + maxCau + ")", 1, maxCau);
         String maDe = QuanLyDanhSach.DS_DETHI.taoMaMoi();
@@ -88,10 +86,11 @@ public final class XuLyThi {
             if (dsGiao[i].getMaDe().equalsIgnoreCase(maDe)) { deChon = dsGiao[i]; break; }
         }
         if (deChon == null) { System.out.println("Ma de khong nam trong danh sach duoc giao!"); return; }
-        if (QuanLyDanhSach.DS_KETQUA.daThi(sv.getMaSV(), deChon.getMaDe())) {
-            System.out.println("Ban da thi de nay roi, khong duoc thi lai!");
+        if (deChon.getNgayThi() != null && LocalDateTime.now().isBefore(deChon.getNgayThi())) {
+            System.out.println("Chua den gio mo de thi (" + deChon.getNgayThi().format(NhapChuan.DINH_DANG) + ")!");
             return;
         }
+        if (QuanLyDanhSach.DS_KETQUA.daThi(sv.getMaSV(), deChon.getMaDe())) { System.out.println("Ban da thi de nay roi, khong duoc thi lai!"); return; }
         ChiTietDeThi[] dsCT = QuanLyDanhSach.DS_CHITIETDETHI.layTheoMaDe(deChon.getMaDe());
         if (dsCT.length == 0) { System.out.println("De thi chua co cau hoi!"); return; }
         String maKQ = QuanLyDanhSach.DS_KETQUA.taoMaMoi();
@@ -115,14 +114,12 @@ public final class XuLyThi {
             double diemDat = ch.chamDiem(traLoi, dsCT[i].getDiemToiDa());
             tongDiem += diemDat;
             if (Math.abs(diemDat - dsCT[i].getDiemToiDa()) < 1e-6) soCauDung++;
-            QuanLyDanhSach.DS_CHITIETKETQUA.themVaoDanhSach(
-                    new ChiTietKetQua(maKQ, ch.getMaCH(), traLoi, ch.getDapAnChuan(), diemDat));
+            QuanLyDanhSach.DS_CHITIETKETQUA.themVaoDanhSach(new ChiTietKetQua(maKQ, ch.getMaCH(), traLoi, ch.getDapAnChuan(), diemDat));
             if ((System.currentTimeMillis() - batDau) >= gioiHanMs) {
                 System.out.println("Da het thoi gian lam bai! He thong tu dong nop bai.");
                 for (int j = i + 1; j < dsCT.length; j++) {
                     CauHoi con = QuanLyDanhSach.DS_CAUHOI.timKiemMa(dsCT[j].getMaCH());
-                    QuanLyDanhSach.DS_CHITIETKETQUA.themVaoDanhSach(
-                            new ChiTietKetQua(maKQ, dsCT[j].getMaCH(), "", con == null ? "" : con.getDapAnChuan(), 0));
+                    QuanLyDanhSach.DS_CHITIETKETQUA.themVaoDanhSach(new ChiTietKetQua(maKQ, dsCT[j].getMaCH(), "", con == null ? "" : con.getDapAnChuan(), 0));
                 }
                 break;
             }
@@ -132,9 +129,7 @@ public final class XuLyThi {
         QuanLyDanhSach.DS_KETQUA.themVaoDanhSach(kq);
         QuanLyDanhSach.ghiDuLieuDanhSach();
         System.out.println("\n=== KET QUA BAI THI (" + maKQ + ") ===");
-        System.out.println("So cau dung: " + soCauDung + "/" + dsCT.length);
-        System.out.println("Tong diem: " + String.format(Locale.US, "%.2f", tongDiem));
-        System.out.println("Thoi gian lam: " + thoiGianGiay + " giay");
+        System.out.println("Dung: " + soCauDung + "/" + dsCT.length + " | Diem: " + String.format(Locale.US, "%.2f", tongDiem) + " | Thoi gian: " + thoiGianGiay + "s");
     }
 
     public static void xemChiTietBaiLam(String maKQ) {
@@ -159,8 +154,7 @@ public final class XuLyThi {
                 DeThi de = QuanLyDanhSach.DS_DETHI.timKiemMa(kq.getMaDe());
                 if (de == null || !de.getMaGV().equalsIgnoreCase(maGV)) continue;
             }
-            boolean khop = (chon == 3)
-                    || (chon == 1 && kq.getMaDe().equalsIgnoreCase(key))
+            boolean khop = (chon == 3) || (chon == 1 && kq.getMaDe().equalsIgnoreCase(key))
                     || (chon == 2 && kq.getMaSV().equalsIgnoreCase(key))
                     || (chon == 4 && String.format(Locale.US, "%.2f", kq.getDiem()).equals(diemStr));
             if (khop) {
@@ -183,9 +177,18 @@ public final class XuLyThi {
 
     private static boolean coTrongDanhSach(String dsMa, String maSV) {
         String[] parts = dsMa.split("[,;]");
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i].trim().equalsIgnoreCase(maSV)) return true;
-        }
+        for (int i = 0; i < parts.length; i++) { if (parts[i].trim().equalsIgnoreCase(maSV)) return true; }
         return false;
+    }
+
+    private static void canhBaoDoiTuongRong(String loaiDT, String doiTuong) {
+        for (int i = 0; i < QuanLyDanhSach.DS_NGUOIDUNG.getSoLuong(); i++) {
+            if (QuanLyDanhSach.DS_NGUOIDUNG.docPhanTu(i) instanceof SinhVien) {
+                SinhVien sv = (SinhVien) QuanLyDanhSach.DS_NGUOIDUNG.docPhanTu(i);
+                boolean khop = loaiDT.equals("LOP") ? sv.getLop().equalsIgnoreCase(doiTuong) : coTrongDanhSach(doiTuong, sv.getMaSV());
+                if (khop) return;
+            }
+        }
+        System.out.println("Canh bao: Chua co sinh vien nao thuoc doi tuong nay!");
     }
 }
