@@ -6,4 +6,6 @@ out/
 .vscode/
 .DS_Store
 *.md
+!README.md
+build_spec_oop_questionbank.md
 .agents
