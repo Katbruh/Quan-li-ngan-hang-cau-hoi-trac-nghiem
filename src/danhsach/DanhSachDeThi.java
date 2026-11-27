@@ -14,6 +14,7 @@ import tienich.FormatBang;
 import tienich.LuuTru;
 import tienich.NhapChuan;
 import tienich.QuanLyDanhSach;
+import tienich.XuLyThi;
 
 public class DanhSachDeThi implements IDanhSach {
     private DeThi[] ds;
@@ -126,16 +127,7 @@ public class DanhSachDeThi implements IDanhSach {
 
     @Override
     public void nhapThem() {
-        DeThi dt = new DeThi();
-        dt.nhap();
-        dt.setMaDe(taoMaMoi());
-        if (QuanLyDanhSach.nguoiDungHienTai instanceof GiangVien) {
-            dt.setMaGV(QuanLyDanhSach.nguoiDungHienTai.getMa());
-        } else {
-            dt.setMaGV(NhapChuan.docChuoiKhongRong("Ma giang vien"));
-        }
-        them(dt);
-        System.out.println("Da them de thi: " + dt.getMaDe());
+        XuLyThi.taoDeThi();
     }
 
     @Override
