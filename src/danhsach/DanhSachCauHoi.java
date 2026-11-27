@@ -18,9 +18,7 @@ public class DanhSachCauHoi implements IDanhSach {
     public DanhSachCauHoi(DanhSachCauHoi x) {
         this.soLuong = x.soLuong;
         this.ds = new CauHoi[x.soLuong];
-        for (int i = 0; i < x.soLuong; i++) {
-            this.ds[i] = x.ds[i].saoChep();
-        }
+        for (int i = 0; i < x.soLuong; i++) this.ds[i] = x.ds[i].saoChep();
     }
 
     @Override
@@ -95,9 +93,7 @@ public class DanhSachCauHoi implements IDanhSach {
     }
 
     public boolean kiemTraTonTaiGiangVien(String maGV) {
-        for (int i = 0; i < soLuong; i++) {
-            if (ds[i].getMaGV().equalsIgnoreCase(maGV)) return true;
-        }
+        for (int i = 0; i < soLuong; i++) { if (ds[i].getMaGV().equalsIgnoreCase(maGV)) return true; }
         return false;
     }
 
@@ -143,7 +139,12 @@ public class DanhSachCauHoi implements IDanhSach {
             ch.setMaGV(gv.getMa());
             ch.setMaMonHoc(gv.getMaMonHoc());
         } else {
-            ch.setMaGV(NhapChuan.docChuoiKhongRong("Ma giang vien"));
+            String maGV = NhapChuan.docChuoiKhongRong("Ma giang vien");
+            if (!(QuanLyDanhSach.DS_NGUOIDUNG.timKiemMa(maGV) instanceof GiangVien)) {
+                System.out.println("Khong tim thay giang vien " + maGV + "!");
+                return;
+            }
+            ch.setMaGV(maGV);
         }
         them(ch);
         System.out.println("Da them cau hoi: " + ch.getMaCH());
