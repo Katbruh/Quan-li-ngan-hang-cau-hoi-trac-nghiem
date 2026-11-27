@@ -120,6 +120,11 @@ public final class XuLyThi {
                     new ChiTietKetQua(maKQ, ch.getMaCH(), traLoi, ch.getDapAnChuan(), diemDat));
             if ((System.currentTimeMillis() - batDau) >= gioiHanMs) {
                 System.out.println("Da het thoi gian lam bai! He thong tu dong nop bai.");
+                for (int j = i + 1; j < dsCT.length; j++) {
+                    CauHoi con = QuanLyDanhSach.DS_CAUHOI.timKiemMa(dsCT[j].getMaCH());
+                    QuanLyDanhSach.DS_CHITIETKETQUA.themVaoDanhSach(
+                            new ChiTietKetQua(maKQ, dsCT[j].getMaCH(), "", con == null ? "" : con.getDapAnChuan(), 0));
+                }
                 break;
             }
         }
